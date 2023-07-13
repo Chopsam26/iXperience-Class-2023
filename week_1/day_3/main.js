@@ -174,7 +174,7 @@ if (item > 5) {
 
 if (item > 5 || item < 5) {
   // execute this
-  console.log('ello there');
+  console.log('hello there');
 } else {
   // else execute this
   console.log('goodbye there');
