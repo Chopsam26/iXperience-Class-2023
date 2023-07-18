@@ -4,7 +4,6 @@ const output = document.getElementById('output');
 
 button.addEventListener('click', (e) => {
   const randomNumber = Math.round(Math.random() * 10);
-
   const elem = document.createElement('div');
   elem.classList.add('alert');
   output.innerHTML = '';
@@ -21,7 +20,7 @@ button.addEventListener('click', (e) => {
 
   setTimeout(() => {
     this.hide();
-  }, 2500);
+  }, 5000);
   input.value = '';
 
   output.appendChild(elem);
