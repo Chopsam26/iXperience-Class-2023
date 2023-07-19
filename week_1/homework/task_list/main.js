@@ -97,19 +97,21 @@ class Book {
     }
   
     onEditBookClicked(book) {
-      this.filterBookArray(book);
-  
-      this.title.value = book.title;
-      this.author.value = book.author;
-      this.isbn.value = book.isbn;
-  
-      this.saveBooksToLocalStorage();
-      this.renderBookTable();
-    }
+        const index = this.books.findIndex((currentBook) => book.title === currentBook.title);
+        if (index !== -1) {
+          const newTitle = this.title.textContent.trim();
+          if (newTitle !== '') {
+            this.books[index].title = newTitle;
+            this.saveBooksToLocalStorage();
+            this.renderBookTable();
+            this.title.textContent = ''; // Clear the title after editing
+          }
+        }
+      }
   
     filterBookArray(book) {
       this.books = this.books.filter((currentBook) => {
-        return book.isbn != currentBook.isbn;
+        return book.title !== currentBook.title;
       });
       // [1, 2, 3, 4]
       // [1, 3, 4]
