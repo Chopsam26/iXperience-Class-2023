@@ -12,7 +12,7 @@ class Book {
     constructor() {
       this.form = document.getElementById('form');
   
-      this.title = document.getElementById('title-input');
+      this.title = document.getElementById('title');
       this.tableBody = document.getElementById('table-body');
   
       this.form.addEventListener('submit', (e) => this.onFormSubmit(e));
@@ -62,8 +62,8 @@ class Book {
       tdTitle.innerHTML = book.title;
   
       const actionButtons = this.createActionButtons(book);
-      tdActions.appendChild(actionButtons[0]);
       tdActions.appendChild(actionButtons[1]);
+      tdActions.appendChild(actionButtons[0]);
   
       tr.appendChild(tdTitle);
       tr.appendChild(tdActions);
@@ -73,21 +73,22 @@ class Book {
   
     createActionButtons(book) {
       const deleteButton = document.createElement('button');
-      const editButton = document.createElement('button');
+      const checkBox = document.createElement('input');
+      checkBox.type = 'checkbox';
   
       deleteButton.setAttribute('class', 'btn btn-danger btn-sm me-1');
       deleteButton.innerHTML = 'Delete';
       deleteButton.addEventListener('click', () => {
         this.onDeleteBookClicked(book);
       });
-  
-      editButton.setAttribute('class', 'btn btn-warning btn-sm ms-1');
-      editButton.innerHTML = 'Edit';
-      editButton.addEventListener('click', () => {
-        this.onEditBookClicked(book);
+
+      checkBox.setAttribute('class','checkbox me-4');
+      checkBox.addEventListener('click', () => {
+        this.onCheckboxClicked(book);
       });
   
-      return [deleteButton, editButton];
+  
+      return [deleteButton, checkBox];
     }
   
     onDeleteBookClicked(book) {
@@ -96,18 +97,16 @@ class Book {
       this.renderBookTable();
     }
   
-    onEditBookClicked(book) {
-        const index = this.books.findIndex((currentBook) => book.title === currentBook.title);
-        if (index !== -1) {
-          const newTitle = this.title.textContent.trim();
-          if (newTitle !== '') {
-            this.books[index].title = newTitle;
-            this.saveBooksToLocalStorage();
-            this.renderBookTable();
-            this.title.textContent = ''; // Clear the title after editing
-          }
-        }
+    onCheckboxClicked(book) {
+      const index = this.books.findIndex((currentBook) => book.title === currentBook.title);
+      if (this.books[index].checkBox.checked == true){
+        this.books[index].checkBox.checked = false;
+      } else {
+        this.books[index].checkBox.checked = true;
       }
+    }
+    
+   
   
     filterBookArray(book) {
       this.books = this.books.filter((currentBook) => {
