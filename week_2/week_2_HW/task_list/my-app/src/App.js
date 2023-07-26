@@ -10,15 +10,26 @@ import { Task } from './models/Task';
 import TaskInput from './Components/TaskInput';
 import TaskTable from './Components/TaskTable';
 
+import TaskService from './services/task-service';
+
 function App() {
   const [tasks, setTasks] = useState([]);
 
   // useEffect is a React Hook
   useEffect(() => {
     if (!tasks.length) {
-      loadTasksFromLocalStorage();
+      onInitalLoad();
     }
 
+    async function onInitalLoad() {
+      try {
+        const tasks = await TaskService.fetchTasks();
+        setTasks(tasks);
+      } catch (err) {
+
+        console.log(err);
+      }
+    }
     // In the case of an empty array, the function only
     // fires the first time the component initializes
 
@@ -27,52 +38,60 @@ function App() {
   }, []);
 
   useEffect(() => {
-    saveTasksToLocalStorage();
+   // saveTasksToLocalStorage();
+   console.log('hello');
   }, [tasks]);
 
-  function onTaskCreate(name) {
+
+  async function onTaskCreate(name) {
     // create the task
     // unique id
-    const id = new Date().getTime();
+   // const id = new Date().getTime();
     // new task instance
-    const task = new Task(id, name, false);
+    //const task = new Task(id, name, false);
+
+    const task = await TaskService.createTask(new Task(null, name, false));
 
     // add thee task to the state tasks
     setTasks([...tasks, task]);
   }
 
-  function onTaskRemove(taskId) {
+   async function onTaskRemove(taskId) {
     // update the tasks state with the filtered tasks
+    await TaskService.deleteTask(taskId);
     setTasks(tasks.filter((task) => task.id !== taskId));
   }
 
-  function onTaskCompleteToggle(taskId) {
+  async function onTaskCompleteToggle(taskId) {
     // toggle the task complete state
     const taskToToggle = tasks.find((task) => task.id === taskId);
     taskToToggle.complete = !taskToToggle.complete;
+    TaskService.updateTask(taskToToggle);
+
+    const updateTask = await TaskService.updateTask(taskToToggle);
 
     // update the tasks state with the new task
     setTasks(
       tasks.map((task) => {
-        return task.id == taskId ? taskToToggle : task;
+        return task.id == taskId ? updateTask : task;
       })
     );
   }
 
-  function saveTasksToLocalStorage() {
-    const json = JSON.stringify(tasks);
-    localStorage.setItem('tasks', json);
-  }
+  // function saveTasksToLocalStorage() {
+  //   const json = JSON.stringify(tasks);
+  //   localStorage.setItem('tasks', json);
+  // }
 
-  function loadTasksFromLocalStorage() {
-    const json = localStorage.getItem('tasks');
-    if (json) {
-      const taskArr = JSON.parse(json);
-      if (taskArr.length) {
-        setTasks(taskArr.map((x) => Task.fromJson(x)));
-      }
-    }
-  }
+  // function loadTasksFromLocalStorage() {
+  //   const json = localStorage.getItem('tasks');
+  //   if (json) {
+  //     const taskArr = JSON.parse(json);
+  //     if (taskArr.length) {
+  //       setTasks(taskArr.map((x) => Task.fromJson(x)));
+  //     }
+  //   }
+  // }
 
   return (
     <div className="container mt-5">
